@@ -102,17 +102,75 @@ class Snake:
         self.direction = RIGHT
         self.color_index = 0
 
+
+# Custom food as a cartoon mouse
 class Food(turtle.Turtle):
     def __init__(self):
         super().__init__()
-        self.shape("circle")
+        self.hideturtle()
         self.penup()
-        self.color("black")
         self.speed(0)
         self.refresh()
 
+    def draw_mouse(self, x, y):
+        self.clear()
+        # Draw head
+        self.penup()
+        self.goto(x, y - SEGMENT_SIZE//2)
+        self.pendown()
+        self.fillcolor("gray")
+        self.begin_fill()
+        self.circle(SEGMENT_SIZE//2)
+        self.end_fill()
+        # Draw left ear
+        self.penup()
+        self.goto(x - SEGMENT_SIZE//2, y + SEGMENT_SIZE//4)
+        self.pendown()
+        self.fillcolor("gray")
+        self.begin_fill()
+        self.circle(SEGMENT_SIZE//4)
+        self.end_fill()
+        # Draw right ear
+        self.penup()
+        self.goto(x + SEGMENT_SIZE//2, y + SEGMENT_SIZE//4)
+        self.pendown()
+        self.fillcolor("gray")
+        self.begin_fill()
+        self.circle(SEGMENT_SIZE//4)
+        self.end_fill()
+        # Draw nose
+        self.penup()
+        self.goto(x, y - SEGMENT_SIZE//2 + 2)
+        self.pendown()
+        self.fillcolor("pink")
+        self.begin_fill()
+        self.circle(SEGMENT_SIZE//10)
+        self.end_fill()
+        # Draw eyes
+        self.penup()
+        # Move eyes higher: adjust y by +SEGMENT_SIZE//8
+        eye_y = y - SEGMENT_SIZE//8
+        self.goto(x - SEGMENT_SIZE//6, eye_y)
+        self.pendown()
+        self.fillcolor("black")
+        self.begin_fill()
+        self.circle(SEGMENT_SIZE//20)
+        self.end_fill()
+        self.penup()
+        self.goto(x + SEGMENT_SIZE//6, eye_y)
+        self.pendown()
+        self.begin_fill()
+        self.circle(SEGMENT_SIZE//20)
+        self.end_fill()
+        self.penup()
+        self.goto(x, y)
+        self.penup()
+        # self.showturtle()  # Keep the turtle hidden so only the drawing appears
+
     def refresh(self):
-        self.goto(random_food_position())
+        x, y = random_food_position()
+        self.goto(x, y)
+        self.draw_mouse(x, y)
 
 def main():
     screen = turtle.Screen()
