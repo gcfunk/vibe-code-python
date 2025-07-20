@@ -182,14 +182,19 @@ def main():
     snake = Snake()
     food = Food()
 
+
     def go_up():
         snake.set_direction(UP)
+        snake.move()
     def go_down():
         snake.set_direction(DOWN)
+        snake.move()
     def go_left():
         snake.set_direction(LEFT)
+        snake.move()
     def go_right():
         snake.set_direction(RIGHT)
+        snake.move()
 
     screen.listen()
     screen.onkey(go_up, "Up")
