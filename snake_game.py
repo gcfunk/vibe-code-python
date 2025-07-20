@@ -66,8 +66,8 @@ class Snake:
     def grow(self):
         tail = self.segments[-1]
         position = tail.position()
-        self.color_index = (self.color_index + 1) % len(RAINBOW_COLORS)
-        color = RAINBOW_COLORS[self.color_index]
+        # Use the next color in the sequence based on the new length
+        color = RAINBOW_COLORS[len(self.segments) % len(RAINBOW_COLORS)]
         segment = turtle.Turtle()
         segment.shape("square")
         segment.penup()
