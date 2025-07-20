@@ -1,6 +1,6 @@
 # Vibe Code Python
 
-This is a simple Python project.
+See if I, as a python novice, can code something non-trivial with copilot, as well as learn more Python in the process
 
 ## Files
 - `first.py`: Prints a greeting message.
