@@ -222,12 +222,39 @@ def draw_bush_clump(turtle_obj, x, y, size):
         turtle_obj.dot(random.randint(size//2, size), random.choice(bush_colors))
         turtle_obj.penup()
 
+def draw_background_grass(num_clumps=150):
+    """Draw random clumps of grass on the background."""
+    grass_drawer = turtle.Turtle()
+    grass_drawer.hideturtle()
+    grass_drawer.penup()
+    grass_drawer.speed(0)
+    grass_drawer.color("mediumseagreen")
+
+    for _ in range(num_clumps):
+        # Pick a random spot for the clump
+        clump_x = random.randint(-WIDTH//2, WIDTH//2)
+        clump_y = random.randint(-HEIGHT//2, HEIGHT//2)
+        
+        # Draw a few blades in the clump
+        for _ in range(random.randint(3, 6)):
+            grass_drawer.goto(
+                clump_x + random.randint(-10, 10),
+                clump_y + random.randint(-10, 10)
+            )
+            grass_drawer.pendown()
+            grass_drawer.setheading(random.randint(80, 100)) # Pointing mostly up
+            grass_drawer.forward(random.randint(10, 15)) # Blade length
+            grass_drawer.penup()
+
 def main():
     screen = turtle.Screen()
     screen.setup(WIDTH, HEIGHT)
     screen.title("Rainbow Snake Game")
-    screen.bgcolor("white")
+    screen.bgcolor("lightgreen")
     screen.tracer(0)
+
+    # Draw background details
+    draw_background_grass()
 
     snake = Snake()
     food = Food()
