@@ -172,6 +172,56 @@ class Food(turtle.Turtle):
         self.goto(x, y)
         self.draw_mouse(x, y)
 
+def draw_hedge_border():
+    """Draw a hedge border around the play area"""
+    border_drawer = turtle.Turtle()
+    border_drawer.hideturtle()
+    border_drawer.penup()
+    border_drawer.speed(0)
+    
+    hedge_clump_size = SEGMENT_SIZE
+    
+    # Draw a dense hedge by stepping by a fraction of the clump size
+    step = hedge_clump_size // 2
+    
+    # Top border
+    for x in range(-WIDTH//2, WIDTH//2 + step, step):
+        y = HEIGHT//2 - hedge_clump_size//2
+        draw_bush_clump(border_drawer, x, y, hedge_clump_size)
+    
+    # Bottom border
+    for x in range(-WIDTH//2, WIDTH//2 + step, step):
+        y = -HEIGHT//2 + hedge_clump_size//2
+        draw_bush_clump(border_drawer, x, y, hedge_clump_size)
+    
+    # Left border
+    for y in range(-HEIGHT//2, HEIGHT//2 + step, step):
+        x = -WIDTH//2 + hedge_clump_size//2
+        draw_bush_clump(border_drawer, x, y, hedge_clump_size)
+    
+    # Right border
+    for y in range(-HEIGHT//2, HEIGHT//2 + step, step):
+        x = WIDTH//2 - hedge_clump_size//2
+        draw_bush_clump(border_drawer, x, y, hedge_clump_size)
+
+def draw_bush_clump(turtle_obj, x, y, size):
+    """Draw a clump of bushes at the specified position"""
+    turtle_obj.penup()
+    
+    # Define shades of green for a more natural look
+    bush_colors = ["#228B22", "#006400", "#556B2F"] # ForestGreen, DarkGreen, DarkOliveGreen
+    
+    # Draw a few overlapping circles to represent a bush
+    for _ in range(3):
+        turtle_obj.goto(
+            x + random.randint(-size//4, size//4), 
+            y + random.randint(-size//4, size//4)
+        )
+        turtle_obj.pendown()
+        # Use dot for a simple, filled circle
+        turtle_obj.dot(random.randint(size//2, size), random.choice(bush_colors))
+        turtle_obj.penup()
+
 def main():
     screen = turtle.Screen()
     screen.setup(WIDTH, HEIGHT)
@@ -181,6 +231,9 @@ def main():
 
     snake = Snake()
     food = Food()
+    
+    # Draw the hedge border
+    draw_hedge_border()
 
 
     def go_up():
