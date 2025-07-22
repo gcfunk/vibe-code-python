@@ -17,6 +17,7 @@ UP = "up"
 DOWN = "down"
 LEFT = "left"
 RIGHT = "right"
+STOPPED = "stop"
 
 def random_food_position():
     x = random.randint(-WIDTH//2 + SEGMENT_SIZE, WIDTH//2 - SEGMENT_SIZE)
@@ -32,7 +33,7 @@ class Snake:
         self.directions = []
         self.colors = []
         self.create_snake()
-        self.direction = RIGHT
+        self.direction = STOPPED
         self.color_index = 0
 
     def create_snake(self):
@@ -50,6 +51,8 @@ class Snake:
         self.colors.append(color)
 
     def move(self):
+        if self.direction == STOPPED:
+            return
         for i in range(len(self.segments) - 1, 0, -1):
             x = self.segments[i - 1].xcor()
             y = self.segments[i - 1].ycor()
@@ -91,11 +94,17 @@ class Snake:
         for segment in self.segments:
             segment.goto(segment.xcor() + dx, segment.ycor() + dy)
 
-    def set_direction(self, direction):
-        # Prevent the snake from reversing
+    def change_direction(self, new_direction):
         opposites = {UP: DOWN, DOWN: UP, LEFT: RIGHT, RIGHT: LEFT}
-        if direction != opposites.get(self.direction):
-            self.direction = direction
+        # If moving, and the new direction is opposite, stop.
+        if self.direction != STOPPED and new_direction == opposites.get(self.direction):
+            self.direction = STOPPED
+        # If stopped, any direction starts it.
+        elif self.direction == STOPPED:
+            self.direction = new_direction
+        # Otherwise, just change direction as long as it's not a 180.
+        elif new_direction != opposites.get(self.direction):
+            self.direction = new_direction
 
     def head_collision(self):
         x, y = self.segments[0].position()
@@ -114,7 +123,7 @@ class Snake:
         self.segments.clear()
         self.colors.clear()
         self.create_snake()
-        self.direction = RIGHT
+        self.direction = STOPPED
         self.color_index = 0
 
 
@@ -279,13 +288,13 @@ def main():
 
 
     def go_up():
-        snake.set_direction(UP)
+        snake.change_direction(UP)
     def go_down():
-        snake.set_direction(DOWN)
+        snake.change_direction(DOWN)
     def go_left():
-        snake.set_direction(LEFT)
+        snake.change_direction(LEFT)
     def go_right():
-        snake.set_direction(RIGHT)
+        snake.change_direction(RIGHT)
 
     def dodge_up():
         snake.dodge(UP)
