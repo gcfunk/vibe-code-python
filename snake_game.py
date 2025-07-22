@@ -289,21 +289,32 @@ def main():
 
     def go_up():
         snake.change_direction(UP)
+        last_action['type'] = 'move'
     def go_down():
         snake.change_direction(DOWN)
+        last_action['type'] = 'move'
     def go_left():
         snake.change_direction(LEFT)
+        last_action['type'] = 'move'
     def go_right():
         snake.change_direction(RIGHT)
+        last_action['type'] = 'move'
+
+    # Track the last action: 'move' or 'dodge'
+    last_action = {'type': 'move'}
 
     def dodge_up():
         snake.dodge(UP)
+        last_action['type'] = 'dodge'
     def dodge_down():
         snake.dodge(DOWN)
+        last_action['type'] = 'dodge'
     def dodge_left():
         snake.dodge(LEFT)
+        last_action['type'] = 'dodge'
     def dodge_right():
         snake.dodge(RIGHT)
+        last_action['type'] = 'dodge'
 
     screen.listen()
     screen.onkey(go_up, "Up")
@@ -318,17 +329,19 @@ def main():
     score = 0
     running = True
     while running:
+        # Only allow eating if last action was a normal move
+        if last_action['type'] == 'move':
+            head_x, head_y = snake.segments[0].position()
+            food_x, food_y = food.position()
+            if int(head_x) == int(food_x) and int(head_y) == int(food_y):
+                food.refresh()
+                snake.grow()
+                score += 1
+
         snake.move()
 
         screen.update()
         time.sleep(DELAY)
-        
-
-        # Check for food collision
-        if snake.segments[0].distance(food) < SEGMENT_SIZE:
-            food.refresh()
-            snake.grow()
-            score += 1
 
         # Check for collisions
         if snake.head_collision():
