@@ -7,10 +7,12 @@ RAINBOW_COLORS = [
     "red", "orange", "yellow", "green", "blue", "indigo", "violet"
 ]
 
+
 # Game settings
 WIDTH, HEIGHT = 600, 600
 SEGMENT_SIZE = 20
 DELAY = 0.1
+INITIAL_SNAKE_LENGTH = 3
 
 # Directions
 UP = "up"
@@ -37,7 +39,7 @@ class Snake:
         self.color_index = 0
 
     def create_snake(self):
-        for i in range(3):
+        for i in range(INITIAL_SNAKE_LENGTH):
             self.add_segment((-SEGMENT_SIZE * i, 0))
 
     def add_segment(self, position):
@@ -280,7 +282,7 @@ def main():
 
     def update_score():
         score_display.clear()
-        score_display.write(f"Score: {len(snake.segments) - 3}", align="center", font=("Arial", 18, "bold"))
+        score_display.write(f"Score: {len(snake.segments) - INITIAL_SNAKE_LENGTH}", align="center", font=("Arial", 18, "bold"))
     screen = turtle.Screen()
     screen.setup(WIDTH, HEIGHT)
     screen.title("Rainbow Snake Game")
