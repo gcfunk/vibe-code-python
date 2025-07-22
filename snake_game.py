@@ -280,16 +280,12 @@ def main():
 
     def go_up():
         snake.set_direction(UP)
-        snake.move()
     def go_down():
         snake.set_direction(DOWN)
-        snake.move()
     def go_left():
         snake.set_direction(LEFT)
-        snake.move()
     def go_right():
         snake.set_direction(RIGHT)
-        snake.move()
 
     def dodge_up():
         snake.dodge(UP)
@@ -300,6 +296,10 @@ def main():
     def dodge_right():
         snake.dodge(RIGHT)
 
+    def toggle_pause():
+        nonlocal paused
+        paused = not paused
+
     screen.listen()
     screen.onkey(go_up, "Up")
     screen.onkey(go_down, "Down")
@@ -309,13 +309,18 @@ def main():
     screen.onkey(dodge_down, "s")
     screen.onkey(dodge_left, "a")
     screen.onkey(dodge_right, "d")
+    screen.onkey(toggle_pause, "space")
 
     score = 0
     running = True
+    paused = False
     while running:
+        if not paused:
+            snake.move()
+
         screen.update()
         time.sleep(DELAY)
-        snake.move()
+        
 
         # Check for food collision
         if snake.segments[0].distance(food) < SEGMENT_SIZE:
