@@ -76,6 +76,21 @@ class Snake:
         self.segments.append(segment)
         self.colors.append(color)
 
+    def dodge(self, dodge_direction):
+        """Instantly move the entire snake's body in a given direction."""
+        dx, dy = 0, 0
+        if dodge_direction == UP:
+            dy = SEGMENT_SIZE
+        elif dodge_direction == DOWN:
+            dy = -SEGMENT_SIZE
+        elif dodge_direction == LEFT:
+            dx = -SEGMENT_SIZE
+        elif dodge_direction == RIGHT:
+            dx = SEGMENT_SIZE
+        
+        for segment in self.segments:
+            segment.goto(segment.xcor() + dx, segment.ycor() + dy)
+
     def set_direction(self, direction):
         # Prevent the snake from reversing
         opposites = {UP: DOWN, DOWN: UP, LEFT: RIGHT, RIGHT: LEFT}
@@ -276,11 +291,24 @@ def main():
         snake.set_direction(RIGHT)
         snake.move()
 
+    def dodge_up():
+        snake.dodge(UP)
+    def dodge_down():
+        snake.dodge(DOWN)
+    def dodge_left():
+        snake.dodge(LEFT)
+    def dodge_right():
+        snake.dodge(RIGHT)
+
     screen.listen()
     screen.onkey(go_up, "Up")
     screen.onkey(go_down, "Down")
     screen.onkey(go_left, "Left")
     screen.onkey(go_right, "Right")
+    screen.onkey(dodge_up, "w")
+    screen.onkey(dodge_down, "s")
+    screen.onkey(dodge_left, "a")
+    screen.onkey(dodge_right, "d")
 
     score = 0
     running = True
