@@ -4,7 +4,7 @@ import random
 
 # Rainbow colors
 RAINBOW_COLORS = [
-    "red", "orange", "yellow", "green", "blue", "indigo", "violet"
+    "green", "blue", "indigo", "violet", "red", "orange", "yellow"
 ]
 
 
