@@ -44,13 +44,83 @@ class Snake:
 
     def add_segment(self, position):
         segment = turtle.Turtle()
-        segment.shape("square")
         segment.penup()
         color = RAINBOW_COLORS[len(self.segments) % len(RAINBOW_COLORS)]
         segment.color(color)
         segment.goto(position)
+        segment.shape("square")
+        segment.shapesize(stretch_wid=1, stretch_len=1)
         self.segments.append(segment)
         self.colors.append(color)
+
+    def update_segment_styles(self):
+        total = len(self.segments)
+        for idx, segment in enumerate(self.segments):
+            color = self.colors[idx]
+            # Head: oval, slightly larger, oriented in direction of travel
+            if idx == 0:
+                segment.shape("circle")
+                segment.shapesize(stretch_wid=1.1, stretch_len=1.5)
+                segment.setheading(self._head_direction())
+                segment.color("black", color)
+                continue
+            # Determine direction from previous segment
+            prev = self.segments[idx - 1]
+            dx = segment.xcor() - prev.xcor()
+            dy = segment.ycor() - prev.ycor()
+            
+            # Determine if this is neck or tail
+            is_neck = idx < max(2, total // 3)
+            is_tail = idx > total - 4
+            
+            # Stretch perpendicular to this segment's direction of travel
+            if abs(dx) > abs(dy):
+                # Horizontal movement: thin vertically for neck/tail
+                if is_neck:
+                    segment.shape("square")
+                    segment.shapesize(stretch_wid=0.6, stretch_len=1.0)
+                    segment.setheading(0 if dx > 0 else 180)
+                elif is_tail:
+                    segment.shape("square")
+                    taper = max(0.3, 1 - 0.2 * (idx - (total - 4)))
+                    segment.shapesize(stretch_wid=taper, stretch_len=1.0)
+                    segment.setheading(0 if dx > 0 else 180)
+                else:
+                    segment.shape("square")
+                    segment.shapesize(stretch_wid=1.0, stretch_len=1.0)
+                    segment.setheading(0 if dx > 0 else 180)
+            elif abs(dy) > abs(dx):
+                # Vertical movement: thin horizontally for neck/tail
+                if is_neck:
+                    segment.shape("square")
+                    segment.shapesize(stretch_wid=0.6, stretch_len=1.0)
+                    segment.setheading(90 if dy > 0 else 270)
+                elif is_tail:
+                    segment.shape("square")
+                    taper = max(0.3, 1 - 0.2 * (idx - (total - 4)))
+                    segment.shapesize(stretch_wid=taper, stretch_len=1.0)
+                    segment.setheading(90 if dy > 0 else 270)
+                else:
+                    segment.shape("square")
+                    segment.shapesize(stretch_wid=1.0, stretch_len=1.0)
+                    segment.setheading(90 if dy > 0 else 270)
+            else:
+                # Diagonal or no movement: default to normal
+                segment.shape("square")
+                segment.shapesize(stretch_wid=1.0, stretch_len=1.0)
+                segment.setheading(0)
+            segment.color(color)
+
+    def _head_direction(self):
+        # Returns heading angle for head based on current direction
+        if self.direction == UP:
+            return 90
+        elif self.direction == DOWN:
+            return 270
+        elif self.direction == LEFT:
+            return 180
+        else:
+            return 0
 
     def move(self):
         if self.direction == STOPPED:
@@ -67,19 +137,13 @@ class Snake:
             self.segments[0].setx(self.segments[0].xcor() - SEGMENT_SIZE)
         elif self.direction == RIGHT:
             self.segments[0].setx(self.segments[0].xcor() + SEGMENT_SIZE)
+        self.update_segment_styles()
 
     def grow(self):
         tail = self.segments[-1]
         position = tail.position()
-        # Use the next color in the sequence based on the new length
-        color = RAINBOW_COLORS[len(self.segments) % len(RAINBOW_COLORS)]
-        segment = turtle.Turtle()
-        segment.shape("square")
-        segment.penup()
-        segment.color(color)
-        segment.goto(position)
-        self.segments.append(segment)
-        self.colors.append(color)
+        self.add_segment(position)
+        self.update_segment_styles()
 
     def dodge(self, dodge_direction):
         """Instantly move the entire snake's body in a given direction."""
@@ -92,9 +156,9 @@ class Snake:
             dx = -SEGMENT_SIZE
         elif dodge_direction == RIGHT:
             dx = SEGMENT_SIZE
-        
         for segment in self.segments:
             segment.goto(segment.xcor() + dx, segment.ycor() + dy)
+        self.update_segment_styles()
 
     def change_direction(self, new_direction):
         opposites = {UP: DOWN, DOWN: UP, LEFT: RIGHT, RIGHT: LEFT}
@@ -125,6 +189,7 @@ class Snake:
         self.segments.clear()
         self.colors.clear()
         self.create_snake()
+        self.update_segment_styles()
         self.direction = RIGHT
         self.color_index = 0
 
