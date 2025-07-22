@@ -57,10 +57,22 @@ class Snake:
         total = len(self.segments)
         for idx, segment in enumerate(self.segments):
             color = self.colors[idx]
-            # Head: oval, slightly larger, oriented in direction of travel
+            # Head: oval, size varies based on snake length
             if idx == 0:
                 segment.shape("circle")
-                segment.shapesize(stretch_wid=1.1, stretch_len=1.5)
+                # Scale head size based on total segments
+                if total <= 3:
+                    # Very small head for short snake
+                    segment.shapesize(stretch_wid=0.6, stretch_len=0.9)
+                elif total == 4:
+                    # Slightly larger head for 4 segments
+                    segment.shapesize(stretch_wid=0.75, stretch_len=1.05)
+                elif total == 5:
+                    # Medium head for 5 segments
+                    segment.shapesize(stretch_wid=0.9, stretch_len=1.2)
+                else:
+                    # Normal/large head for long snake
+                    segment.shapesize(stretch_wid=1.1, stretch_len=1.5)
                 segment.setheading(self._head_direction())
                 segment.color("black", color)
                 continue
