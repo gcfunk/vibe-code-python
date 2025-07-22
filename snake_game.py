@@ -271,6 +271,16 @@ def draw_background_grass(num_clumps=150):
             grass_drawer.penup()
 
 def main():
+    # Score display
+    score_display = turtle.Turtle()
+    score_display.hideturtle()
+    score_display.penup()
+    score_display.goto(0, HEIGHT//2 - 40)
+    score_display.color("black")
+
+    def update_score():
+        score_display.clear()
+        score_display.write(f"Score: {len(snake.segments) - 3}", align="center", font=("Arial", 18, "bold"))
     screen = turtle.Screen()
     screen.setup(WIDTH, HEIGHT)
     screen.title("Rainbow Snake Game")
@@ -326,7 +336,7 @@ def main():
     screen.onkey(dodge_left, "a")
     screen.onkey(dodge_right, "d")
 
-    score = 0
+    update_score()
     running = True
     while running:
         # Only allow eating if last action was a normal move
@@ -336,7 +346,7 @@ def main():
             if int(head_x) == int(food_x) and int(head_y) == int(food_y):
                 food.refresh()
                 snake.grow()
-                score += 1
+                update_score()
 
         snake.move()
 
@@ -347,7 +357,7 @@ def main():
         if snake.head_collision():
             time.sleep(1)
             snake.reset()
-            score = 0
+            update_score()
 
     screen.mainloop()
 
