@@ -33,7 +33,7 @@ class Snake:
         self.directions = []
         self.colors = []
         self.create_snake()
-        self.direction = STOPPED
+        self.direction = RIGHT
         self.color_index = 0
 
     def create_snake(self):
@@ -123,7 +123,7 @@ class Snake:
         self.segments.clear()
         self.colors.clear()
         self.create_snake()
-        self.direction = STOPPED
+        self.direction = RIGHT
         self.color_index = 0
 
 
