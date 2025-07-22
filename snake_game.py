@@ -305,10 +305,6 @@ def main():
     def dodge_right():
         snake.dodge(RIGHT)
 
-    def toggle_pause():
-        nonlocal paused
-        paused = not paused
-
     screen.listen()
     screen.onkey(go_up, "Up")
     screen.onkey(go_down, "Down")
@@ -318,14 +314,11 @@ def main():
     screen.onkey(dodge_down, "s")
     screen.onkey(dodge_left, "a")
     screen.onkey(dodge_right, "d")
-    screen.onkey(toggle_pause, "space")
 
     score = 0
     running = True
-    paused = False
     while running:
-        if not paused:
-            snake.move()
+        snake.move()
 
         screen.update()
         time.sleep(DELAY)
