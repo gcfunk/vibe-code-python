@@ -185,6 +185,17 @@ class Snake:
             dx = -SEGMENT_SIZE
         elif dodge_direction == RIGHT:
             dx = SEGMENT_SIZE
+        
+        # Check if any segment would go out of bounds
+        for segment in self.segments:
+            new_x = segment.xcor() + dx
+            new_y = segment.ycor() + dy
+            # Check if the new position would be outside the playing area
+            if not (-WIDTH//2 < new_x < WIDTH//2 and -HEIGHT//2 < new_y < HEIGHT//2):
+                # Block the dodge if any segment would go out of bounds
+                return
+        
+        # If all segments would stay in bounds, execute the dodge
         for segment in self.segments:
             segment.goto(segment.xcor() + dx, segment.ycor() + dy)
         self.update_segment_styles()
