@@ -37,6 +37,7 @@ class Snake:
         self.create_snake()
         self.direction = RIGHT
         self.color_index = 0
+        self.pending_direction = None  # Store the last direction input this frame
 
     def create_snake(self):
         for i in range(INITIAL_SNAKE_LENGTH):
@@ -135,6 +136,22 @@ class Snake:
             return 0
 
     def move(self):
+        # Process the last direction input from this frame
+        if self.pending_direction is not None:
+            opposites = {UP: DOWN, DOWN: UP, LEFT: RIGHT, RIGHT: LEFT}
+            new_direction = self.pending_direction
+            self.pending_direction = None  # Clear the pending direction
+            
+            # If moving, and the new direction is opposite, stop.
+            if self.direction != STOPPED and new_direction == opposites.get(self.direction):
+                self.direction = STOPPED
+            # If stopped, any direction starts it.
+            elif self.direction == STOPPED:
+                self.direction = new_direction
+            # Otherwise, just change direction as long as it's not a 180.
+            elif new_direction != opposites.get(self.direction):
+                self.direction = new_direction
+        
         if self.direction == STOPPED:
             return
         for i in range(len(self.segments) - 1, 0, -1):
@@ -173,16 +190,8 @@ class Snake:
         self.update_segment_styles()
 
     def change_direction(self, new_direction):
-        opposites = {UP: DOWN, DOWN: UP, LEFT: RIGHT, RIGHT: LEFT}
-        # If moving, and the new direction is opposite, stop.
-        if self.direction != STOPPED and new_direction == opposites.get(self.direction):
-            self.direction = STOPPED
-        # If stopped, any direction starts it.
-        elif self.direction == STOPPED:
-            self.direction = new_direction
-        # Otherwise, just change direction as long as it's not a 180.
-        elif new_direction != opposites.get(self.direction):
-            self.direction = new_direction
+        # Store the most recent direction input for processing in the next frame
+        self.pending_direction = new_direction
 
     def head_collision(self):
         x, y = self.segments[0].position()
@@ -204,6 +213,7 @@ class Snake:
         self.update_segment_styles()
         self.direction = RIGHT
         self.color_index = 0
+        self.pending_direction = None
 
 
 # Custom food as a cartoon mouse
