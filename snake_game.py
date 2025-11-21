@@ -379,10 +379,6 @@ class Predator(turtle.Turtle):
         dx = snake_x - current_x
         dy = snake_y - current_y
         
-        # If already at snake position, don't move
-        if dx == 0 and dy == 0:
-            return
-        
         # Move one step at a time on the grid
         move_x, move_y = 0, 0
         if abs(dx) > abs(dy):
@@ -401,7 +397,7 @@ class Predator(turtle.Turtle):
         new_x = current_x + move_x
         new_y = current_y + move_y
         
-        # Check bounds (consistent with snake collision detection)
+        # Check bounds (same as snake's boundary check for consistency)
         if -WIDTH//2 < new_x < WIDTH//2 and -HEIGHT//2 < new_y < HEIGHT//2:
             self.goto(new_x, new_y)
             self.draw_cat(new_x, new_y)
