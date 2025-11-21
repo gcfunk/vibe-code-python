@@ -296,6 +296,123 @@ class Food(turtle.Turtle):
         self.goto(x, y)
         self.draw_mouse(x, y)
 
+
+class Predator(turtle.Turtle):
+    def __init__(self):
+        super().__init__()
+        self.hideturtle()
+        self.penup()
+        self.speed(0)
+        self.spawn()
+
+    def draw_cat(self, x, y):
+        self.clear()
+        # Draw body
+        self.penup()
+        self.goto(x, y - SEGMENT_SIZE//2)
+        self.pendown()
+        self.fillcolor("orange")
+        self.begin_fill()
+        self.circle(SEGMENT_SIZE//2)
+        self.end_fill()
+        # Draw left ear (pointed)
+        self.penup()
+        self.goto(x - SEGMENT_SIZE//3, y + SEGMENT_SIZE//3)
+        self.pendown()
+        self.fillcolor("orange")
+        self.begin_fill()
+        for _ in range(3):
+            self.forward(SEGMENT_SIZE//3)
+            self.left(120)
+        self.end_fill()
+        # Draw right ear (pointed)
+        self.penup()
+        self.goto(x + SEGMENT_SIZE//3, y + SEGMENT_SIZE//3)
+        self.pendown()
+        self.fillcolor("orange")
+        self.begin_fill()
+        for _ in range(3):
+            self.forward(SEGMENT_SIZE//3)
+            self.left(120)
+        self.end_fill()
+        # Draw eyes (angry looking)
+        self.penup()
+        eye_y = y - SEGMENT_SIZE//8
+        self.goto(x - SEGMENT_SIZE//6, eye_y)
+        self.pendown()
+        self.fillcolor("red")
+        self.begin_fill()
+        self.circle(SEGMENT_SIZE//15)
+        self.end_fill()
+        self.penup()
+        self.goto(x + SEGMENT_SIZE//6, eye_y)
+        self.pendown()
+        self.begin_fill()
+        self.circle(SEGMENT_SIZE//15)
+        self.end_fill()
+        # Draw nose
+        self.penup()
+        self.goto(x, y - SEGMENT_SIZE//3)
+        self.pendown()
+        self.fillcolor("black")
+        self.begin_fill()
+        self.circle(SEGMENT_SIZE//12)
+        self.end_fill()
+        self.penup()
+
+    def spawn(self):
+        # Spawn predator at a random position away from center
+        x = random.randint(-WIDTH//2 + SEGMENT_SIZE*2, WIDTH//2 - SEGMENT_SIZE*2)
+        y = random.randint(-HEIGHT//2 + SEGMENT_SIZE*2, HEIGHT//2 - SEGMENT_SIZE*2)
+        # Snap to grid
+        x -= x % SEGMENT_SIZE
+        y -= y % SEGMENT_SIZE
+        self.goto(x, y)
+        self.draw_cat(x, y)
+
+    def move_towards_snake(self, snake_head_pos):
+        # Simple AI: move towards snake head
+        current_x, current_y = self.position()
+        snake_x, snake_y = snake_head_pos
+        
+        # Calculate direction
+        dx = snake_x - current_x
+        dy = snake_y - current_y
+        
+        # Move one step at a time on the grid
+        move_x, move_y = 0, 0
+        if abs(dx) > abs(dy):
+            # Move horizontally
+            if dx > 0:
+                move_x = SEGMENT_SIZE
+            elif dx < 0:
+                move_x = -SEGMENT_SIZE
+        else:
+            # Move vertically
+            if dy > 0:
+                move_y = SEGMENT_SIZE
+            elif dy < 0:
+                move_y = -SEGMENT_SIZE
+        
+        new_x = current_x + move_x
+        new_y = current_y + move_y
+        
+        # Check bounds (same as snake's boundary check for consistency)
+        if -WIDTH//2 < new_x < WIDTH//2 and -HEIGHT//2 < new_y < HEIGHT//2:
+            self.goto(new_x, new_y)
+            self.draw_cat(new_x, new_y)
+
+    def collides_with_snake(self, snake):
+        # Check if predator caught the snake head
+        predator_pos = self.position()
+        snake_head_pos = snake.segments[0].position()
+        distance = ((predator_pos[0] - snake_head_pos[0])**2 + 
+                   (predator_pos[1] - snake_head_pos[1])**2)**0.5
+        return distance < SEGMENT_SIZE
+
+    def reset(self):
+        self.spawn()
+
 def draw_hedge_border():
     """Draw a hedge border around the play area"""
     border_drawer = turtle.Turtle()
@@ -392,6 +509,7 @@ def main():
 
     snake = Snake()
     food = Food()
+    predator = Predator()
     
     # Draw the hedge border
     draw_hedge_border()
@@ -438,6 +556,7 @@ def main():
 
     update_score()
     running = True
+    frame_count = 0  # Track frames for predator movement
     while running:
         # Only allow eating if last action was a normal move
         if last_action['type'] == 'move':
@@ -449,6 +568,18 @@ def main():
                 update_score()
 
         snake.move()
+        
+        # Move predator every 2 frames (slower than snake)
+        frame_count += 1
+        if frame_count % 2 == 0:
+            predator.move_towards_snake(snake.segments[0].position())
+        
+        # Check if predator caught the snake
+        if predator.collides_with_snake(snake):
+            time.sleep(1)
+            snake.reset()
+            predator.reset()
+            update_score()
 
         screen.update()
         time.sleep(DELAY)
@@ -457,6 +588,7 @@ def main():
         if snake.head_collision():
             time.sleep(1)
             snake.reset()
+            predator.reset()
             update_score()
 
     screen.mainloop()
